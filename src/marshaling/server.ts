@@ -73,11 +73,16 @@ export default {
       arrStringsOffset += 1;
     }
 
+    // Array "bots" size calculation
+    for (let i = 0; i < msg.bots.length; i += 1) {
+      arraysSize += 2;
+    }
+
     // Root strings size calculation
     const token = encodeUTF8(msg.token);
     const room = encodeUTF8(msg.room);
 
-    const buffer = new ArrayBuffer(15 + token.length + room.length + arraysSize);
+    const buffer = new ArrayBuffer(17 + token.length + room.length + arraysSize);
     const dataView = new DataView(buffer);
 
     let offset = 0;
@@ -151,9 +156,14 @@ export default {
         dataView.setUint8(offset, arrStrings[arrStringsOffset].length);
         offset += 1;
 
-        for (let charOffset = 0; charOffset < arrStrings[arrStringsOffset].length; charOffset += 1) {
+        for (
+          let charOffset = 0;
+          charOffset < arrStrings[arrStringsOffset].length;
+          charOffset += 1
+        ) {
           dataView.setUint8(offset + charOffset, arrStrings[arrStringsOffset][charOffset]);
         }
+
         offset += arrStrings[arrStringsOffset].length;
         arrStringsOffset += 1;
 
@@ -184,7 +194,20 @@ export default {
         // players[upgrades], uint8
         dataView.setUint8(offset, players[i].upgrades);
         offset += 1;
+      }
+    }
 
+    // bots, array
+    {
+      const { bots } = msg;
+
+      dataView.setUint16(offset, bots.length, true);
+      offset += 2;
+
+      for (let i = 0; i < bots.length; i += 1) {
+        // bots[id], uint16
+        dataView.setUint16(offset, bots[i].id, true);
+        offset += 2;
       }
     }
 
@@ -293,7 +316,6 @@ export default {
       dataView.setUint8(offset + charOffset, text[charOffset]);
     }
 
-
     return buffer;
   },
 
@@ -301,7 +323,7 @@ export default {
     // Root strings size calculation
     const name = encodeUTF8(msg.name);
 
-    const buffer = new ArrayBuffer(17 + name.length);
+    const buffer = new ArrayBuffer(18 + name.length);
     const dataView = new DataView(buffer);
 
     let offset = 0;
@@ -355,6 +377,10 @@ export default {
     dataView.setUint8(offset, msg.upgrades);
     offset += 1;
 
+    // isBot, boolean
+    dataView.setUint8(offset, msg.isBot === false ? 0 : 1);
+    offset += 1;
+
     return buffer;
   },
 
@@ -401,27 +427,27 @@ export default {
 
     // posX, coord24
     {
-        const value = msg.posX * 512 + 8388608;
-        const u8 = value % 256;
-        const u16 = (value - u8) / 256;
+      const value = msg.posX * 512 + 8388608;
+      const u8 = value % 256;
+      const u16 = (value - u8) / 256;
 
-        dataView.setUint16(offset, u16, true);
-        offset += 2;
+      dataView.setUint16(offset, u16, true);
+      offset += 2;
 
-        dataView.setUint8(offset, u8)
+      dataView.setUint8(offset, u8);
       offset += 1;
     }
 
     // posY, coord24
     {
-        const value = msg.posY * 512 + 8388608;
-        const u8 = value % 256;
-        const u16 = (value - u8) / 256;
+      const value = msg.posY * 512 + 8388608;
+      const u8 = value % 256;
+      const u16 = (value - u8) / 256;
 
-        dataView.setUint16(offset, u16, true);
-        offset += 2;
+      dataView.setUint16(offset, u16, true);
+      offset += 2;
 
-        dataView.setUint8(offset, u8)
+      dataView.setUint8(offset, u8);
       offset += 1;
     }
 
@@ -516,7 +542,6 @@ export default {
         // projectiles[maxSpeed], speed
         dataView.setUint16(offset, projectiles[i].maxSpeed * 1638.4 + 32768, true);
         offset += 2;
-
       }
     }
 
@@ -579,7 +604,6 @@ export default {
         // players[healthRegen], regen
         dataView.setUint16(offset, players[i].healthRegen * 1e6 + 32768, true);
         offset += 2;
-
       }
     }
 
@@ -601,27 +625,27 @@ export default {
 
     // posX, coord24
     {
-        const value = msg.posX * 512 + 8388608;
-        const u8 = value % 256;
-        const u16 = (value - u8) / 256;
+      const value = msg.posX * 512 + 8388608;
+      const u8 = value % 256;
+      const u16 = (value - u8) / 256;
 
-        dataView.setUint16(offset, u16, true);
-        offset += 2;
+      dataView.setUint16(offset, u16, true);
+      offset += 2;
 
-        dataView.setUint8(offset, u8)
+      dataView.setUint8(offset, u8);
       offset += 1;
     }
 
     // posY, coord24
     {
-        const value = msg.posY * 512 + 8388608;
-        const u8 = value % 256;
-        const u16 = (value - u8) / 256;
+      const value = msg.posY * 512 + 8388608;
+      const u8 = value % 256;
+      const u16 = (value - u8) / 256;
 
-        dataView.setUint16(offset, u16, true);
-        offset += 2;
+      dataView.setUint16(offset, u16, true);
+      offset += 2;
 
-        dataView.setUint8(offset, u8)
+      dataView.setUint8(offset, u8);
       offset += 1;
     }
 
@@ -816,7 +840,6 @@ export default {
         // players[team], uint16
         dataView.setUint16(offset, players[i].team, true);
         offset += 2;
-
       }
     }
 
@@ -846,27 +869,27 @@ export default {
 
     // posX, coord24
     {
-        const value = msg.posX * 512 + 8388608;
-        const u8 = value % 256;
-        const u16 = (value - u8) / 256;
+      const value = msg.posX * 512 + 8388608;
+      const u8 = value % 256;
+      const u16 = (value - u8) / 256;
 
-        dataView.setUint16(offset, u16, true);
-        offset += 2;
+      dataView.setUint16(offset, u16, true);
+      offset += 2;
 
-        dataView.setUint8(offset, u8)
+      dataView.setUint8(offset, u8);
       offset += 1;
     }
 
     // posY, coord24
     {
-        const value = msg.posY * 512 + 8388608;
-        const u8 = value % 256;
-        const u16 = (value - u8) / 256;
+      const value = msg.posY * 512 + 8388608;
+      const u8 = value % 256;
+      const u16 = (value - u8) / 256;
 
-        dataView.setUint16(offset, u16, true);
-        offset += 2;
+      dataView.setUint16(offset, u16, true);
+      offset += 2;
 
-        dataView.setUint8(offset, u8)
+      dataView.setUint8(offset, u8);
       offset += 1;
     }
 
@@ -1058,7 +1081,6 @@ export default {
         // players[playerHealthRegen], regen
         dataView.setUint16(offset, players[i].playerHealthRegen * 1e6 + 32768, true);
         offset += 2;
-
       }
     }
 
@@ -1105,7 +1127,6 @@ export default {
         // mobs[maxSpeed], speed
         dataView.setUint16(offset, mobs[i].maxSpeed * 1638.4 + 32768, true);
         offset += 2;
-
       }
     }
 
@@ -1135,27 +1156,27 @@ export default {
 
     // posX, coord24
     {
-        const value = msg.posX * 512 + 8388608;
-        const u8 = value % 256;
-        const u16 = (value - u8) / 256;
+      const value = msg.posX * 512 + 8388608;
+      const u8 = value % 256;
+      const u16 = (value - u8) / 256;
 
-        dataView.setUint16(offset, u16, true);
-        offset += 2;
+      dataView.setUint16(offset, u16, true);
+      offset += 2;
 
-        dataView.setUint8(offset, u8)
+      dataView.setUint8(offset, u8);
       offset += 1;
     }
 
     // posY, coord24
     {
-        const value = msg.posY * 512 + 8388608;
-        const u8 = value % 256;
-        const u16 = (value - u8) / 256;
+      const value = msg.posY * 512 + 8388608;
+      const u8 = value % 256;
+      const u16 = (value - u8) / 256;
 
-        dataView.setUint16(offset, u16, true);
-        offset += 2;
+      dataView.setUint16(offset, u16, true);
+      offset += 2;
 
-        dataView.setUint8(offset, u8)
+      dataView.setUint8(offset, u8);
       offset += 1;
     }
 
@@ -1205,27 +1226,27 @@ export default {
 
     // posX, coord24
     {
-        const value = msg.posX * 512 + 8388608;
-        const u8 = value % 256;
-        const u16 = (value - u8) / 256;
+      const value = msg.posX * 512 + 8388608;
+      const u8 = value % 256;
+      const u16 = (value - u8) / 256;
 
-        dataView.setUint16(offset, u16, true);
-        offset += 2;
+      dataView.setUint16(offset, u16, true);
+      offset += 2;
 
-        dataView.setUint8(offset, u8)
+      dataView.setUint8(offset, u8);
       offset += 1;
     }
 
     // posY, coord24
     {
-        const value = msg.posY * 512 + 8388608;
-        const u8 = value % 256;
-        const u16 = (value - u8) / 256;
+      const value = msg.posY * 512 + 8388608;
+      const u8 = value % 256;
+      const u16 = (value - u8) / 256;
 
-        dataView.setUint16(offset, u16, true);
-        offset += 2;
+      dataView.setUint16(offset, u16, true);
+      offset += 2;
 
-        dataView.setUint8(offset, u8)
+      dataView.setUint8(offset, u8);
       offset += 1;
     }
 
@@ -1444,7 +1465,6 @@ export default {
       dataView.setUint8(offset + charOffset, text[charOffset]);
     }
 
-
     return buffer;
   },
 
@@ -1472,7 +1492,6 @@ export default {
       dataView.setUint8(offset + charOffset, text[charOffset]);
     }
 
-
     return buffer;
   },
 
@@ -1499,7 +1518,6 @@ export default {
     for (let charOffset = 0; charOffset < text.length; charOffset += 1) {
       dataView.setUint8(offset + charOffset, text[charOffset]);
     }
-
 
     return buffer;
   },
@@ -1531,7 +1549,6 @@ export default {
     for (let charOffset = 0; charOffset < text.length; charOffset += 1) {
       dataView.setUint8(offset + charOffset, text[charOffset]);
     }
-
 
     return buffer;
   },
@@ -1638,7 +1655,6 @@ export default {
         // data[level], uint8
         dataView.setUint8(offset, data[i].level);
         offset += 1;
-
       }
     }
 
@@ -1661,7 +1677,6 @@ export default {
         // rankings[y], uint8
         dataView.setUint8(offset, rankings[i].y);
         offset += 1;
-
       }
     }
 
@@ -1720,7 +1735,6 @@ export default {
         // scores[ping], uint16
         dataView.setUint16(offset, scores[i].ping, true);
         offset += 2;
-
       }
     }
 
@@ -1783,7 +1797,6 @@ export default {
         // scores[ping], uint16
         dataView.setUint16(offset, scores[i].ping, true);
         offset += 2;
-
       }
     }
 
@@ -1850,7 +1863,6 @@ export default {
         // scores[ping], uint16
         dataView.setUint16(offset, scores[i].ping, true);
         offset += 2;
-
       }
     }
 
@@ -1885,7 +1897,6 @@ export default {
       dataView.setUint8(offset + charOffset, text[charOffset]);
     }
 
-
     return buffer;
   },
 
@@ -1913,7 +1924,6 @@ export default {
       dataView.setUint8(offset + charOffset, data[charOffset]);
     }
 
-
     return buffer;
-  }
+  },
 };

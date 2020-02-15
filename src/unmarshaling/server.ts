@@ -141,6 +141,7 @@ export default {
           const encodedString = new Uint8Array(stringLength);
 
           readIndex += 1;
+
           for (let charIndex = 0; charIndex < stringLength; charIndex += 1) {
             encodedString[charIndex] = dataView.getUint8(readIndex + charIndex);
           }
@@ -177,7 +178,25 @@ export default {
         arrayElement.upgrades = dataView.getUint8(readIndex);
         readIndex += 1;
 
-        msg.players.push(arrayElement)
+        msg.players.push(arrayElement);
+      }
+    }
+
+    // bots, array
+    {
+      const arrayLength = dataView.getUint16(readIndex, true);
+
+      readIndex += 2;
+      msg.bots = [];
+
+      for (let i = 0; i < arrayLength; i += 1) {
+        const arrayElement: Login['bots'][0] = {};
+
+        // id, uint16
+        arrayElement.id = dataView.getUint16(readIndex, true);
+        readIndex += 2;
+
+        msg.bots.push(arrayElement);
       }
     }
 
@@ -328,6 +347,10 @@ export default {
     msg.upgrades = dataView.getUint8(readIndex);
     readIndex += 1;
 
+    // isBot, boolean
+    msg.isBot = dataView.getUint8(readIndex) !== 0;
+    readIndex += 1;
+
     return msg;
   },
 
@@ -467,7 +490,7 @@ export default {
         arrayElement.maxSpeed = (dataView.getUint16(readIndex, true) - 32768) / 1638.4;
         readIndex += 2;
 
-        msg.projectiles.push(arrayElement)
+        msg.projectiles.push(arrayElement);
       }
     }
 
@@ -522,7 +545,7 @@ export default {
         arrayElement.healthRegen = (dataView.getUint16(readIndex, true) - 32768) / 1e6;
         readIndex += 2;
 
-        msg.players.push(arrayElement)
+        msg.players.push(arrayElement);
       }
     }
 
@@ -722,7 +745,7 @@ export default {
         arrayElement.team = dataView.getUint16(readIndex, true);
         readIndex += 2;
 
-        msg.players.push(arrayElement)
+        msg.players.push(arrayElement);
       }
     }
 
@@ -931,7 +954,7 @@ export default {
         arrayElement.playerHealthRegen = (dataView.getUint16(readIndex, true) - 32768) / 1e6;
         readIndex += 2;
 
-        msg.players.push(arrayElement)
+        msg.players.push(arrayElement);
       }
     }
 
@@ -981,7 +1004,7 @@ export default {
         arrayElement.maxSpeed = (dataView.getUint16(readIndex, true) - 32768) / 1638.4;
         readIndex += 2;
 
-        msg.mobs.push(arrayElement)
+        msg.mobs.push(arrayElement);
       }
     }
 
@@ -1450,7 +1473,7 @@ export default {
         arrayElement.level = dataView.getUint8(readIndex);
         readIndex += 1;
 
-        msg.data.push(arrayElement)
+        msg.data.push(arrayElement);
       }
     }
 
@@ -1476,7 +1499,7 @@ export default {
         arrayElement.y = dataView.getUint8(readIndex);
         readIndex += 1;
 
-        msg.rankings.push(arrayElement)
+        msg.rankings.push(arrayElement);
       }
     }
 
@@ -1527,7 +1550,7 @@ export default {
         arrayElement.ping = dataView.getUint16(readIndex, true);
         readIndex += 2;
 
-        msg.scores.push(arrayElement)
+        msg.scores.push(arrayElement);
       }
     }
 
@@ -1582,7 +1605,7 @@ export default {
         arrayElement.ping = dataView.getUint16(readIndex, true);
         readIndex += 2;
 
-        msg.scores.push(arrayElement)
+        msg.scores.push(arrayElement);
       }
     }
 
@@ -1641,7 +1664,7 @@ export default {
         arrayElement.ping = dataView.getUint16(readIndex, true);
         readIndex += 2;
 
-        msg.scores.push(arrayElement)
+        msg.scores.push(arrayElement);
       }
     }
 
@@ -1706,5 +1729,5 @@ export default {
     }
 
     return msg;
-  }
+  },
 };

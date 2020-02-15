@@ -78,6 +78,16 @@ export interface LoginPlayer {
 }
 
 /**
+ * Bot player.
+ */
+export interface LoginBot {
+  /**
+   * Player ID.
+   */
+  id?: number;
+}
+
+/**
  * Response on client `Login`.
  */
 export interface Login extends ProtocolPacket {
@@ -120,6 +130,11 @@ export interface Login extends ProtocolPacket {
    * List of connected players.
    */
   players?: LoginPlayer[];
+
+  /**
+   * List of bots.
+   */
+  bots?: LoginBot[];
 }
 
 /**
@@ -246,6 +261,11 @@ export interface PlayerNew extends ProtocolPacket {
    * `encodeUpgrades` result. See lib function.
    */
   upgrades?: number;
+
+  /**
+   * True if player is a bot.
+   */
+  isBot?: boolean;
 }
 
 /**
